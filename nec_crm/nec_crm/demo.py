@@ -142,7 +142,27 @@ def _region_of(city: str) -> str:
     return city
 
 
+def _default_customer_group():
+    """A non-group Customer Group — ERPNext rejects group nodes on a Customer."""
+    default = frappe.db.get_single_value("Selling Settings", "customer_group")
+    if default and not frappe.db.get_value("Customer Group", default, "is_group"):
+        return default
+    leaf = frappe.db.get_value("Customer Group", {"is_group": 0}, "name")
+    if leaf:
+        return leaf
+    parent = frappe.db.get_value("Customer Group", {"is_group": 1}, "name") or "All Customer Groups"
+    return frappe.get_doc(
+        {
+            "doctype": "Customer Group",
+            "customer_group_name": "Retail Shops",
+            "parent_customer_group": parent,
+            "is_group": 0,
+        }
+    ).insert(ignore_permissions=True).name
+
+
 def _customers():
+    customer_group = _default_customer_group()
     for name, city, notes in CUSTOMERS:
         if frappe.db.exists("Customer", {"customer_name": name}):
             continue
@@ -151,8 +171,7 @@ def _customers():
                 "doctype": "Customer",
                 "customer_name": name,
                 "customer_type": "Company",
-                "customer_group": frappe.db.get_single_value("Selling Settings", "customer_group")
-                or "All Customer Groups",
+                "customer_group": customer_group,
                 "territory": city,
                 "sales_notes": notes,
             }
