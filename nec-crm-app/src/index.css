@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 15px;
+}
+
+@layer components {
+
+    /* Instrument Serif numerals — the signature move */
+    .num {
+        @apply font-serif;
+        font-feature-settings: "tnum";
+    }
+
+    /* small section eyebrow, also Instrument Serif per spec */
+    .eyebrow {
+        @apply font-serif text-muted text-[15px] leading-none;
+    }
+
+    .card {
+        @apply bg-card border border-line rounded-2xl;
+    }
+
+    .input-field {
+        @apply w-full bg-card border border-line rounded-xl px-3.5 py-3 text-[15px] text-ink placeholder-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent/15;
+    }
+
+    .btn-primary {
+        @apply w-full bg-accent text-white rounded-xl py-3.5 text-[15px] font-medium disabled:opacity-40 disabled:pointer-events-none active:opacity-90 transition-opacity;
+    }
+
+    .btn-ghost {
+        @apply rounded-xl border border-line bg-card px-4 py-2.5 text-[14px] text-ink active:bg-paper;
+    }
+
+    .pill {
+        @apply inline-flex items-center rounded-full px-2 py-0.5 text-[12px] leading-5;
+    }
+}
+
+/* hide scrollbars on horizontal chip rows */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

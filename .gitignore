@@ -1,0 +1,28 @@
+# ── dependencies / build output ──
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# ── env & secrets (never commit) ──
+.env
+.env.*
+!.env.example
+
+# ── python / frappe ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+
+# ── editor / OS ──
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ── local tooling ──
+.claude/
+scratchpad/
