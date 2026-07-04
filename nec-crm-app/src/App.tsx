@@ -15,6 +15,8 @@ import LogInteraction from "./pages/LogInteraction";
 import Tasks from "./pages/Tasks";
 import Me from "./pages/Me";
 import ManagerView from "./pages/ManagerView";
+import Reports from "./pages/Reports";
+import ReportView from "./pages/ReportView";
 import BottomNav from "./components/BottomNav";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -42,6 +44,8 @@ function Shell() {
                     <Route path="/tasks" element={guard(<Tasks />)} />
                     <Route path="/me" element={guard(<Me />)} />
                     <Route path="/manager" element={guard(<ManagerView />)} />
+                    <Route path="/reports" element={guard(<Reports />)} />
+                    <Route path="/reports/:name" element={guard(<ReportView />)} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </div>

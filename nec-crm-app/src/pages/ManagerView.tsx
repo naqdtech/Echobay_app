@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { crmAPI } from "../api/crm";
-import { CONFIG } from "../config";
 import { prettyDate } from "../utils/format";
+import { REPORTS } from "../reports";
 import type { ManagerSnapshot } from "../types";
-
-const REPORTS = [
-    { name: "Interaction Log", ref: "Interaction" },
-    { name: "Sales Person Activity Summary", ref: "Interaction" },
-    { name: "Customer Silence Report", ref: "Customer" },
-    { name: "Lead Funnel Report", ref: "Lead" },
-    { name: "Open and Overdue Tasks", ref: "ToDo" },
-    { name: "Backdated Interactions", ref: "Interaction" },
-    { name: "Interactions by Hour", ref: "Interaction" },
-];
 
 export default function ManagerView() {
     const { isManager } = useAuth();
@@ -31,9 +21,6 @@ export default function ManagerView() {
     }, [isManager, navigate]);
 
     const maxInteractions = Math.max(1, ...(snap?.per_rep.map((r) => r.interactions) || [1]));
-    const deskBase = CONFIG.DESK_BASE_URL || "";
-    const reportUrl = (name: string) =>
-        `${deskBase}/app/query-report/${encodeURIComponent(name)}`;
 
     // laggards: active reps well below the team's top performer
     const lowPerformers = (snap?.per_rep || []).filter(
@@ -109,22 +96,22 @@ export default function ManagerView() {
             )}
 
             <section>
-                <h2 className="eyebrow mb-2">Reports</h2>
+                <div className="flex items-baseline justify-between mb-2">
+                    <h2 className="eyebrow">Reports</h2>
+                    <Link to="/reports" className="text-[13px] text-accent">All reports</Link>
+                </div>
                 <div className="card divide-y divide-line">
                     {REPORTS.map((rep) => (
-                        <a
+                        <Link
                             key={rep.name}
-                            href={reportUrl(rep.name)}
-                            target="_blank"
-                            rel="noreferrer"
+                            to={`/reports/${encodeURIComponent(rep.name)}`}
                             className="flex items-center justify-between px-4 py-3.5"
                         >
-                            <span className="text-[14px]">{rep.name}</span>
-                            <i className="ti ti-external-link text-[16px] text-faint" />
-                        </a>
+                            <span className="text-[14px]">{rep.label}</span>
+                            <i className="ti ti-chevron-right text-[16px] text-faint" />
+                        </Link>
                     ))}
                 </div>
-                <p className="text-[12px] text-faint mt-2">Reports open in ERPNext.</p>
             </section>
         </div>
     );

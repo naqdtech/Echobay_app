@@ -163,6 +163,54 @@ export const notesAPI = {
     },
 };
 
+// ── query reports (in-app viewer) ─────────────────────
+
+export interface ReportColumn {
+    label: string;
+    fieldname: string;
+    fieldtype?: string;
+    width?: number;
+}
+
+export interface ReportResult {
+    columns: ReportColumn[];
+    rows: Record<string, any>[];
+}
+
+export const reportAPI = {
+    /** Run an ERPNext query report through the authenticated /api proxy. */
+    run: async (reportName: string, filters: Record<string, any>): Promise<ReportResult> => {
+        const res = await apiClient.get("/api/method/frappe.desk.query_report.run", {
+            params: { report_name: reportName, filters: j(filters) },
+        });
+        const msg = res.data?.message || {};
+
+        const columns: ReportColumn[] = (msg.columns || []).map((c: any) => {
+            if (typeof c === "string") {
+                // "Label:Fieldtype/Options:Width"
+                const [label, type = "Data"] = c.split(":");
+                return {
+                    label,
+                    fieldname: label.toLowerCase().replace(/\s+/g, "_"),
+                    fieldtype: type.split("/")[0],
+                };
+            }
+            return { label: c.label, fieldname: c.fieldname, fieldtype: c.fieldtype, width: c.width };
+        });
+
+        // rows come back as dicts (as_dict reports) or positional arrays
+        const rows: Record<string, any>[] = (msg.result || [])
+            .filter((r: any) => r != null)
+            .map((r: any) =>
+                Array.isArray(r)
+                    ? Object.fromEntries(columns.map((c, i) => [c.fieldname, r[i]]))
+                    : r
+            );
+
+        return { columns, rows };
+    },
+};
+
 // ── tasks (Frappe ToDo — never a custom doctype) ──────
 
 export const todoAPI = {
