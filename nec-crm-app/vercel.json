@@ -1,0 +1,20 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/:match*",
+            "destination": "https://testerp.naqd.in/api/:match*"
+        },
+        {
+            "source": "/files/:match*",
+            "destination": "https://testerp.naqd.in/files/:match*"
+        },
+        {
+            "source": "/private/files/:match*",
+            "destination": "https://testerp.naqd.in/private/files/:match*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
